@@ -10,7 +10,7 @@ use Session;
 class PostController extends Controller
 {
     public function __construct() {
-        $this->middleware(['auth', 'clearance'])->except('index', 'show');
+        $this->middleware(['auth'])->except('index', 'show');
     }
 
     /**
@@ -20,7 +20,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::orderby('id', 'desc')->paginate(5); //show only 5 items at a time in descending order
+        $posts = Post::orderBy('id', 'desc')->paginate(5); //show only 5 items at a time in descending order
 
         return view('posts.index', compact('posts'));
     }
@@ -29,9 +29,12 @@ class PostController extends Controller
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function create()
     {
+        $this->authorize('create', Post::class);
+
         return view('posts.create');
     }
 
@@ -40,9 +43,12 @@ class PostController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function store(Request $request)
     {
+        $this->authorize('create', Post::class);
+
         //Validating title and body field
         $this->validate($request, [
             'title'=>'required|max:100',
@@ -51,8 +57,9 @@ class PostController extends Controller
 
         $title = $request['title'];
         $body = $request['body'];
+        $user_id = Auth::user()->id;
 
-        $post = Post::create($request->only('title', 'body'));
+        $post = Post::create(compact('title', 'body', 'user_id'));
 
         //Display a successful message upon save
         return redirect()->route('posts.index')
@@ -65,10 +72,12 @@ class PostController extends Controller
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function show($id)
     {
-        $post = Post::findOrFail($id); //Find post of id = $id
+        $post = Post::findOrFail($id);
+        $this->authorize('view', $post);
 
         return view ('posts.show', compact('post'));
     }
@@ -78,10 +87,12 @@ class PostController extends Controller
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function edit($id)
     {
         $post = Post::findOrFail($id);
+        $this->authorize('update', $post);
 
         return view('posts.edit', compact('post'));
     }
@@ -92,6 +103,7 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function update(Request $request, $id)
     {
@@ -101,6 +113,8 @@ class PostController extends Controller
         ]);
 
         $post = Post::findOrFail($id);
+        $this->authorize('update', $post);
+
         $post->title = $request->input('title');
         $post->body = $request->input('body');
         $post->save();
@@ -116,10 +130,13 @@ class PostController extends Controller
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function destroy($id)
     {
         $post = Post::findOrFail($id);
+        $this->authorize('delete', $post);
+
         $post->delete();
 
         return redirect()->route('posts.index')
