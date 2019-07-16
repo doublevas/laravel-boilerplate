@@ -15,7 +15,7 @@
             {{ Form::label('name', 'Name') }}
             {{ Form::text('name', '', array('class' => 'form-control')) }}
         </div><br>
-        @if(!$roles->isEmpty()) //If no roles exist yet
+        @if(!$roles->isEmpty())
         <h4>Assign Permission to Roles</h4>
 
         @foreach ($roles as $role)

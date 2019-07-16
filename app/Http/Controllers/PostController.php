@@ -9,7 +9,8 @@ use Session;
 
 class PostController extends Controller
 {
-    public function __construct() {
+    public function __construct()
+    {
         $this->middleware(['auth'])->except('index', 'show');
     }
 
@@ -20,7 +21,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::orderBy('id', 'desc')->paginate(5); //show only 5 items at a time in descending order
+        $posts = Post::orderBy('id', 'desc')->paginate(5);
 
         return view('posts.index', compact('posts'));
     }
@@ -49,7 +50,6 @@ class PostController extends Controller
     {
         $this->authorize('create', Post::class);
 
-        //Validating title and body field
         $this->validate($request, [
             'title'=>'required|max:100',
             'body' =>'required',
@@ -61,10 +61,8 @@ class PostController extends Controller
 
         $post = Post::create(compact('title', 'body', 'user_id'));
 
-        //Display a successful message upon save
         return redirect()->route('posts.index')
-            ->with('flash_message', 'Article,
-             '. $post->title.' created');
+            ->with('flash_message', 'Article '.$post->title.' created');
     }
 
     /**
@@ -79,7 +77,7 @@ class PostController extends Controller
         $post = Post::findOrFail($id);
         $this->authorize('view', $post);
 
-        return view ('posts.show', compact('post'));
+        return view('posts.show', compact('post'));
     }
 
     /**
@@ -119,10 +117,13 @@ class PostController extends Controller
         $post->body = $request->input('body');
         $post->save();
 
-        return redirect()->route('posts.show',
-            $post->id)->with('flash_message',
-            'Article, '. $post->title.' updated');
-
+        return redirect()->route(
+            'posts.show',
+            $post->id
+        )->with(
+            'flash_message',
+            'Article '.$post->title.' updated'
+            );
     }
 
     /**
@@ -140,8 +141,9 @@ class PostController extends Controller
         $post->delete();
 
         return redirect()->route('posts.index')
-            ->with('flash_message',
-                'Article successfully deleted');
-
+            ->with(
+                'flash_message',
+                'Article successfully deleted'
+            );
     }
 }
