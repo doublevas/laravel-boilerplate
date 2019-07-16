@@ -1,12 +1,8 @@
 <?php
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 Auth::routes();
 
-Route::get('/', 'PostController@index')->name('home');
+Route::get('/', 'PostController@index')->name('home'); // atm, it duplicates the posts.index
 
 Route::resource('users', 'UserController');
 

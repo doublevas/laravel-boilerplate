@@ -1,7 +1,7 @@
 {
-    "name": "artoodetoo/laravel-skeleton",
-    "description": "The Laravel Skeleton Application.",
-    "keywords": ["skeleton", "laravel"],
+    "name": "doublevas/laravel-skeleton",
+    "description": "The Laravel Skeleton Application with Authorization.",
+    "keywords": ["skeleton", "laravel", "authorization"],
     "license": "MIT",
     "type": "project",
     "require": {
@@ -12,7 +12,7 @@
         "laravel/tinker": "~1.0",
         "laravelcollective/html": "^5.5",
         "nesbot/carbon": "2.0.0 as 1.39.0",
-        "spatie/laravel-permission": "^1.9"
+        "spatie/laravel-permission": "^2.7"
     },
     "require-dev": {
         "filp/whoops": "~2.0",
